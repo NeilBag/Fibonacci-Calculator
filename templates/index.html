@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Fibonacci Calculator</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
+</head>
+<body>
+    <section class="section">
+        <div class="container">
+            <h1 class="title">Fibonacci Calculator</h1>
+            <form method="post" action="{{ url_for('fibonacci_calculator') }}" class="mb-5">
+                <div class="field">
+                    <label class="label">Starting Number</label>
+                    <div class="control">
+                        <input class="input" type="number" name="start_number" placeholder="Enter the starting number" required>
+                    </div>
+                </div>
+                <div class="field">
+                    <label class="label">Fibonacci Range</label>
+                    <div class="control">
+                        <input class="input" type="number" name="fibonacci_range" placeholder="Enter the Fibonacci range" required>
+                    </div>
+                </div>
+                <div class="field">
+                    <label class="label">Currency</label>
+                    <div class="control">
+                        <div class="select">
+                            <select name="currency_code">
+                                {% for code, symbol in currency_symbols.items() %}
+                                <option value="{{ code }}">{{ code }} - {{ symbol }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="field">
+                    <div class="control">
+                        <button class="button is-primary" type="submit">Calculate</button>
+                    </div>
+                </div>
+            </form>
+            {% if fibonacci_values %}
+            <div class="box">
+                <h2 class="subtitle">Fibonacci Sequence</h2>
+                <table class="table is-striped is-fullwidth">
+                    <thead>
+                        <tr>
+                            <th>Iteration</th>
+                            <th>Value</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for i in range(fibonacci_range + 1) %}
+                        <tr>
+                            <td>{{ i }}</td>
+                            <td>{{ fibonacci_values[i]|format_number(currency_symbol) }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                <form method="post" action="{{ url_for('export_to_excel') }}" class="mt-4">
+                    <input type="hidden" name="start_number" value="{{ request.form['start_number'] }}">
+                    <input type="hidden" name="fibonacci_range" value="{{ request.form['fibonacci_range'] }}">
+                    <input type="hidden" name="currency_code" value="{{ request.form['currency_code'] }}">
+                    <button type="submit" class="button is-primary">Export to Excel</button>
+                </form>
+            </div>
+            {% endif %}
+        </div>
+    </section>
+</body>
+</html>
